@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <!-- <link rel="stylesheet" type="text/css" href="/css/style.css"> -->
+    <title>YLTS 2023 Pre-registration Successful</title>
+</head>
+<body class="bg-light">
+
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card">
+                <div class="card-body">
+                    <h4 class="card-title">Registration Successful!</h4>
+                    <p class="card-text">Your pre-registration to YLTS 2023 was successful. Please use the following code for reference:</p>
+                    <h1 id="regCodeDisplay" class="display-3 text-center text-warning"></h1>
+                    <p class="text-center">Keep this code for future reference.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function () {
+    // Retrieve the registration code from sessionStorage
+    const regCode = sessionStorage.getItem('regCode');
+
+    if(!regCode){
+    	window.location.href = '/';
+    }
+
+    // Display the registration code in the HTML
+    document.getElementById('regCodeDisplay').textContent = regCode;
+  });
+</script>
+</body>
+
+</html>

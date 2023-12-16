@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>YLTS2023 Delegate Search</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
+    <!-- Custom styles -->
+    <style>
+        body {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        #search-container {
+            max-width: 600px;
+            width: 100%;
+        }
+
+        #search-results {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container" id="search-container">
+        <h2 class="text-center mt-5">Search for Delegates</h2>
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Enter reference code" id="searchInput">
+        </div>
+        <div id="search-results" class="list-group">
+            <!-- Search results will be displayed here -->
+        </div>
+    </div>
+    <!-- Custom script -->
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('searchInput');
+        const searchResults = document.getElementById('search-results');
+
+        searchInput.addEventListener('input', function() {
+            const query = searchInput.value.trim().toLowerCase();
+            searchResults.innerHTML = '';
+            if (query.length == 4) {
+                // Make a Fetch request to the server for delegate search
+                fetch('/search-delegates', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ query }),
+                    })
+                    .then(response => response.json())
+                    .then(filteredDelegates => {
+                        displaySearchResults(filteredDelegates);
+                    })
+                    .catch(error => {
+                        console.error('Error fetching delegates:', error);
+                    });
+            }
+
+        });
+    });
+
+    function displaySearchResults(results) {
+        const searchResults = document.getElementById('search-results');
+        searchResults.innerHTML = '';
+
+        if (results.length === 0) {
+            const noResultsItem = document.createElement('li');
+            noResultsItem.className = 'list-group-item';
+            noResultsItem.textContent = 'No results found';
+            searchResults.appendChild(noResultsItem);
+        } else {
+            const responsiveDiv = document.createElement('div');
+            responsiveDiv.className = 'table-responsive-md';
+            // Create a Bootstrap table
+            const table = document.createElement('table');
+            table.className = 'table table-bordered mt-3';
+
+
+
+            // Create table header
+            const thead = document.createElement('thead');
+            thead.innerHTML = `
+                <tr class="bg-primary text-white">
+                    <th>No</th>
+                    <th>Name</th>
+                    <th>Age</th>
+                    <th>Gender</th>
+                    <th>Baptized</th>
+                </tr>
+            `;
+            table.appendChild(thead);
+             // Create table body
+            const tbody = document.createElement('tbody');
+            let counter = 1;
+            let churchName = '';
+            let phone= '';
+            results.forEach(delegate => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${counter++}</td>
+                    <td>${delegate.name}</td>
+                    <td>${delegate.age}</td>
+                    <td>${delegate.gender}</td>
+                    <td>${delegate.baptized ? 'Yes' : 'No'}</td>
+                `;
+                tbody.appendChild(row);
+                churchName = delegate.church_name;
+                phone = delegate.phone;
+            });
+
+            const footer = document.createElement('tr');
+            footer.innerHTML = `<td class="table-secondary"  colspan="5"><strong>Church:</strong> ${churchName} / <strong>Phone:</strong> ${phone}</td>`;
+            tbody.appendChild(footer);
+
+            table.appendChild(tbody);
+            responsiveDiv.appendChild(table);
+            // Append the table to the search results container
+            searchResults.appendChild(responsiveDiv);
+        }
+    }
+    </script>
+</body>
+
+</html>
